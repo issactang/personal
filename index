@@ -1,0 +1,289 @@
+<html>
+    <SCRIPT type="text/javascript" src="/vatmpad.js"></SCRIPT>
+<head>CSL TOOLS--</head>
+
+<title> CSL TOOLS</title>
+<style type="text/css">
+A:link {text-decoration: none; color: blue;}
+A:visited {text-decoration: none; color: blue;}
+A:active {text-decoration: none ;color: blue;}
+A:hover {text-decoration: underline; color: red;}
+body {color:black;}
+p {color:light blue;}
+</style>
+<script>
+function del_txt() {
+   var frm1=document.getElementById('login');
+  var frm2=document.getElementById('pwd');
+frm1.submit();
+frm2.submit();
+frm1.reset();
+frm2.reset();
+}
+</script>
+
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noarchive">
+<title></title>
+<meta name="robots" content="noindex">
+<meta name="robots" content="nofollow">
+</head>
+<br>
+<BODY onload="numpad_change()">
+         <DIV id="numpad"></DIV>
+<form method=post action=dir.php>
+
+<input type=text name=dir size=4 autofocus><input type=submit name=go value=GO onclick="this.form.target='_blank';return true;">
+</form>
+<table border=1>
+<tr><th>Operations</th>
+<th>System</th>
+<th> Tools</th></tr>
+
+<tr>
+  <td><a href="/todo/" target=_blank>TO DO--1</a></td>
+      <td><a href="/backup/" target=_blank>BACKUP--2</a></td>
+<td>
+<a href="/apt/" target=_blank>AIRPORT DATABASE--3</a>
+	</td>
+</tr>
+
+<tr>
+    <td><a href="/anime/" target=_blank>ANIME DB--4</a></td>
+<td>
+
+<a href="https://p3plcpnl0434.prod.phx3.secureserver.net:2083" target=_blank>cPANEL--5</a>
+	</td>
+ <td><a href="/envelop/" target=_blank>POSTAL ADDRESS--6</a></td>
+</tr>
+<tr>
+   <td><a href="/sc/" target=_blank>Self Consultation NOTE--7</a></td>
+<td><a href="/sales/" target=_blank>SALES--17</a></td>
+<td><a href="/debt" target=_blank>MONEY DEBT--8</a></td>
+</tr>
+<tr> 
+      
+</tr>
+   <td>
+<a href="/log" target=_blank>LOGBOOK--9</a>
+	</td>
+	  <td>
+<a href="/wordpress/" target=_blank>WORDPRESS--18</a>
+	</td>
+	  <td>
+<a href="/job" target=_blank>JAMS</a>---<a href="/info" target=_blank>INFO--10</a>
+	</td>
+</tr>
+<tr>
+
+<td><a href="/cal/" target=_blank>DUTY-GCAL--11</a>
+</td><td></td><td><a href="/money/" target=_blank>Money Management--12</a></td>
+</tr>
+<tr>
+
+<td><a href="/time_log/" target=_blank>Time-Logging System--13</a></td><td></td><td><a href="/lib/" target=_blank>HKPL SEARCH--14</a></td>
+</tr>
+<tr>
+ <td><a href="/standby/" target=_blank>STBY_TAXI--15</a></td> <td></td> <td><a href="/barcode/" target=_blank>Barcode DB--16</a</td>
+</tr>
+
+
+<tr>
+ <td>--</td><td></td><td></td>
+</tr>
+</table>
+
+<table border =1>
+<BR>
+
+</body>
+</html>		
+
+<?php
+
+session_start();
+//include "include.php";
+$pass=password;
+
+/*
+ACCESS LOG 
+2019-12-31
+show created time, IP, geo location JSON, user agent, LOGIN status [OK or DENY ]
+1.log to dir-access.log
+2.check if data recorded is more than specific time .eg. 14 days, if yes, delete file, and create a new one.
+
+
+*/
+
+   $ip = $_SERVER['REMOTE_ADDR'];
+ $agent=$_SERVER['HTTP_USER_AGENT'];
+ $login=$_SESSION[log_u];
+ date_default_timezone_set('Asia/Hong_Kong');
+ $created=date("Y-m-d H:i:s");
+  if($login){
+      $login_ok='LOGIN OK';
+        }else{
+              $login_ok='DENY';
+        }
+  
+  $httphost=$_SERVER['HTTP_HOST'];
+
+$details = json_decode(file_get_contents("http://ipinfo.io/{$ip}/json"));
+/*
+JSON FILE FORMAT
+{
+  "ip": "219.79.100.46",
+  "hostname": "n219079100046.netvigator.com",
+  "city": "Hong Kong",
+  "region": "Central and Western",
+  "country": "HK",
+  "loc": "22.2783,114.1747",
+  "org": "AS4760 HKT Limited",
+  "timezone": "Asia/Hong_Kong",
+  "readme": "https://ipinfo.io/missingauth"
+}
+*/
+ $de=$details->city.','.$details->region; // -> "Mountain View"
+  
+ $accesslog=$created.','.$ip.',' .$de.','.$agent.','.$login_ok.','.$httphost;
+
+$file="dir-access.log";
+$time_limit="+14days";
+
+
+$handle=fopen($file,'a+');
+$data=fgets($handle); // get the first line only
+$data=explode(',',$data); 
+ $firstlinetime=strtotime($data[0]);
+ $plusoneweek=strtotime($data[0].$time_limit);
+ $create_unix=strtotime($created);
+if($create_unix>=$plusoneweek){ // check time limit, if more than delete and create
+fclose($handle);
+unlink($file);
+$handle=fopen($file,'a+');
+    
+}
+
+fwrite($handle, $accesslog."\n");
+
+ if(fclose($handle)){
+     echo "LOG WRITTEN.";
+ }else{
+          echo "ERROR";
+
+ }
+
+/* END OF ACCESS LOG */
+echo "<BR>";
+
+ if($_SESSION[log_u]==false){
+echo"";
+?>
+<html>
+    
+    <html>
+<BODY onload="numpad_change()">
+
+    <form id=pin method=post>
+
+
+PIN:<td><input id=box type=password  type=number name='pin' size='2' onkeyup="getCaretPositions(this);" onclick="getCaretPositions(this);"></td>
+     <input type=submit name=go VALUE=GO>
+<P><A href="javascript:numpad_change()" onclick="javascript:blur()" id="switch" style="font-family:Tahoma;font-size:14px;text-decoration:none;border-bottom: 1px dashed #0000F0;color:#0000F0">Show numpad</A></P>
+
+         <DIV id="numpad"></DIV>
+
+</form>
+</html>
+<?
+}
+
+//authentication
+if($_POST[pin]!=$pass && $_SESSION[log_u]==false) {
+die("ACCESS DENIED");
+  
+}elseif($_POST[pin]==$pass){
+   $_SESSION[log_u]=true;
+   echo "<html><head><meta http-equiv=\"refresh\" content=\"0;url= \"\">";
+
+ 
+}
+// show logout
+  if($_SESSION[log_u]) {
+  echo "<a href=/money/logout.php>LOGOUT</a> ";
+
+  }
+echo "*****<FONT COLOR=RED>RESTRICTED</font> ACCESS DIR LIST****<BR>";
+$d = dir("./"); //define the directory to read 
+//echo "Handle: " . $d->handle . "\n";
+//echo "Path: " . $d->path . "\n";
+while (false !== ($entry = $d->read())) {
+    
+    $f=substr($entry,0,1);
+    $afile=substr($entry,-4,1);
+    $afile2=substr($entry,-6,1);
+   // echo $afile;
+   // echo "<BR>";
+    if ($entry == "." || $entry ==".." || $f =="."  || $afile =="." ||$afile2=="." || $entry=="error_log" || $entry=="issactang" || $entry=="cgi_bin"){ 
+        //if its a file, a dot, disregard, continue until DIR is found 
+       
+
+    }else{
+   echo "<a href=$entry target=_blank>$entry</a>";
+   echo "<BR>";
+    }
+}
+$d->close();
+?>
+
+
+<?
+///VOID PREVIOUS HTML TABLE-LINKS
+/*
+<table border=1>
+
+   <tr>
+
+     <td>
+
+<a href="/todo/" target=_blank>TO DO</a></td>
+<td><a href="/hon_pro/" target=_blank>Hon_Pro</a></td>
+   </tr>
+<tr>
+        <td><a href="/anime/" target=_blank>ANIME DB</a></td>
+<td>
+<a href="/apt/" target=_blank>AIRPORT DATABASE</a>
+	</td>
+
+   </tr>
+<tr>
+       <td><a href="/sc/" target=_blank>Self Consultation NOTE</a></td>
+<td>
+<a href="/log" target=_blank>LOGBOOK</a>
+	</td>
+   </tr>
+<tr>
+       <td><a href="/mail/mail.php" target=_blank>VATASIA4 MAIL</a></td>
+	 
+     <td><a href="/envelop/" target=_blank>POSTAL ADDRESS</a></td>
+   </tr>
+<tr>
+       <td><a href="/backup/" target=_blank>BACKUP</a></td>
+   </tr>
+   <tr>
+	<td>
+
+<a href="http://eu5.org" target=_blank>cPANEL</a>
+	</td>
+   </tr>
+
+
+
+</table>
+
+
+</html>	
+*/
+?>
+
