@@ -1,0 +1,78 @@
+<?php
+/* ACCESS LOG FUNCTION
+2019-12-31
+Access LOG
+1. detect IP, Region from JSON, User Agent, HOST, LOGIN STATUS
+2. write to dir-access log
+a) check if file is 14days old, delete and create new one
+b) write on file 
+*/
+//echo "hello log.php";
+function logging($filename,$time_limit){
+    if($filename=="" || $filename== NULL) {$filename="access_log.log";}
+   if($time_limit==""||$time_limit== NULL){ $time_limit="+14days";}
+   $ip = $_SERVER['REMOTE_ADDR'];
+ $agent=$_SERVER['HTTP_USER_AGENT'];
+ $login=$_SESSION[log_u];
+ date_default_timezone_set('Asia/Hong_Kong');
+ $created=date("Y-m-d H:i:s");
+  if($login){
+      $login_ok='LOGIN OK';
+        }else{
+              $login_ok='DENY';
+        }
+ 
+  $httphost=$_SERVER['HTTP_HOST'];
+  $url=$_SERVER['PHP_SELF'];
+
+$details = json_decode(file_get_contents("http://ipinfo.io/{$ip}/json"));
+/*
+JSON FILE FORMAT
+{
+  "ip": "219.79.100.46",
+  "hostname": "n219079100046.netvigator.com",
+  "city": "Hong Kong",
+  "region": "Central and Western",
+  "country": "HK",
+  "loc": "22.2783,114.1747",
+  "org": "AS4760 HKT Limited",
+  "timezone": "Asia/Hong_Kong",
+  "readme": "https://ipinfo.io/missingauth"
+}
+*/
+
+ $de=$details->city.','.$details->region; // -> "Mountain View"
+ 
+ $accesslog=$created.','.$ip.',' .$de.','.$agent.','.$login_ok.','.$httphost.','.$url;
+
+
+
+
+
+$handle=fopen($filename,'a+');
+$data=fgets($handle); // get the first line only
+$data=explode(',',$data);
+ $firstlinetime=strtotime($data[0]);
+ $plusoneweek=strtotime($data[0].$time_limit);
+ $create_unix=strtotime($created);
+if($create_unix>=$plusoneweek){ // check time limit, if more than delete and create
+fclose($handle);
+unlink($filename);
+$handle=fopen($filename,'a+');
+   
+}
+
+fwrite($handle, $accesslog."\n");
+
+fclose($handle);
+        
+ 
+
+/* END OF ACCESS LOG */
+   
+}
+
+
+
+
+?>
